@@ -45,25 +45,28 @@ document.addEventListener('keydown', function(e) {
 //프레임마다 실행하는 함수
 var timer = 0;
 var jumpTimer = 0;
+var animation;
 
 function frame() {
-    requestAnimationFrame(frame);
+    animation = requestAnimationFrame(frame);
     
     timer++;
     ctx.clearRect(0, 0, canvas.width, canvas.height); //화면 지움
 
-    if (timer % 120 == 0) {
+    if (timer % 150 == 0) {
         var cactus = new Cactus();
         cactusGroup.push(cactus);
     }
 
     cactusGroup.forEach((a, i, o)=>{
         //x좌표가 0이면 제거
-        if (a.x < 0) {
+        if (a.x < -50) {
             o.splice(i, 1);
         }
-        a.x--;
+        a.x = a.x - 2;
         a.draw();
+
+        checkCrush(dino, a);
     })
 
     //점프 올라가기
@@ -89,5 +92,13 @@ function frame() {
 }
 frame();
 
-
+//충돌확인
+function checkCrush(dino, cactus) {
+    var xGap = cactus.x - (dino.x + dino.width);
+    var yGap = cactus.y - (dino.y + dino.height);
+    
+    if (xGap <= 0 && yGap <= 0) {
+        cancelAnimationFrame(animation);
+    }
+}
 
