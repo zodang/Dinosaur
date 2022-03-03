@@ -21,7 +21,7 @@ var dino = {
 var cactusGroup = [];
 
 class Cactus {
-    constructor() {
+    constructor (x, y, width, height) {
         this.x = 500;
         this.y = 200;
         this.width = 50;
@@ -29,18 +29,25 @@ class Cactus {
     }
     draw() {
         ctx.fillStyle = 'red';
-        ctx.fillRect(this.x, this.y, this.width, this.height); 
+        ctx.fillRect(this.x, this.y, this.width, this.height);
     }
 }
 
 //스페이스바 누르면 점프
 var jump = false;
 
-document.addEventListener('keydown', function(e) {
-    if (e.code == 'Space' && dino.y == 200) {
+document.addEventListener('keydown', function(event) {
+    if (event.code == 'Space' && dino.y == 200) {
         jump = true;
     }
 })
+
+document.addEventListener('click', function() {
+    if (dino.y == 200) {
+        jump = true;
+    }
+})
+
 
 //프레임마다 실행하는 함수
 var timer = 0;
@@ -58,15 +65,15 @@ function frame() {
         cactusGroup.push(cactus);
     }
 
-    cactusGroup.forEach((a, i, o)=>{
-        //x좌표가 0이면 제거
-        if (a.x < -50) {
-            o.splice(i, 1);
+    cactusGroup.forEach((element, index, array) => {
+        //x좌표가 -50 제거
+        if (element.x < -50) {
+            array.splice(index, 1);
         }
-        a.x = a.x - 2;
-        a.draw();
+        element.x = element.x - 2;
+        element.draw();
 
-        checkCrush(dino, a);
+        checkCrush(dino, element);
     })
 
     //점프 올라가기
