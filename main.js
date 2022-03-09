@@ -4,108 +4,104 @@ var ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth - 100;
 canvas.height = window.innerHeight - 100;
 
-//dino 객체
-
 var dino = {
-    x : 10,
-    y : 200,
-    width : 50,
-    height : 50,
+    x:100,
+    y: 400,
+    width: 50,
+    height: 50,
     draw() {
         ctx.fillStyle = 'green';
-        ctx.fillRect(this.x, this.y, this.width, this.height);        
-    }
-}
-
-//장애물 클래스
-var cactusGroup = [];
-
-class Cactus {
-    constructor (x, y, width, height) {
-        this.x = 500;
-        this.y = 200;
-        this.width = 50;
-        this.height = 50;
-    }
-    draw() {
-        ctx.fillStyle = 'red';
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
 }
 
-//스페이스바 누르면 점프
-var jump = false;
-
-document.addEventListener('keydown', function(event) {
-    if (event.code == 'Space' && dino.y == 200) {
-        jump = true;
+class Cactus {
+    constructor (x, y, width, height) {
+        this.x = x;
+        this.y = 400;
+        this.width = 50;
+        this.height = 50;
     }
-})
-
-document.addEventListener('click', function() {
-    if (dino.y == 200) {
-        jump = true;
+    draw() {
+        ctx.fillStyle = "red";
+        ctx.fillRect(this.x, this.y, this.width, this.height);
     }
-})
-
-
-//프레임마다 실행하는 함수
-var timer = 0;
-var jumpTimer = 0;
-var animation;
-
-function frame() {
-    animation = requestAnimationFrame(frame);
-    
-    timer++;
-    ctx.clearRect(0, 0, canvas.width, canvas.height); //화면 지움
-
-    if (timer % 150 == 0) {
-        var cactus = new Cactus();
-        cactusGroup.push(cactus);
-    }
-
-    cactusGroup.forEach((element, index, array) => {
-        //x좌표가 -50 제거
-        if (element.x < -50) {
-            array.splice(index, 1);
-        }
-        element.x = element.x - 2;
-        element.draw();
-
-        checkCrush(dino, element);
-    })
-
-    //점프 올라가기
-    if (jump == true) {
-        jumpTimer++;
-        dino.y -= 2;
-    }
-    
-    //50 프레임동안 점프
-    if (jumpTimer > 60) {
-        jump = false;
-        jumpTimer = 0;
-    }
-
-    //점프 내려오기
-    if (jump == false) {
-        if (dino.y < 200){
-            dino.y += 2;
-        }
-    }
-
-    dino.draw();
 }
-frame();
 
-//충돌확인
-function checkCrush(dino, cactus) {
-    var xGap = cactus.x - (dino.x + dino.width);
-    var yGap = cactus.y - (dino.y + dino.height);
-    
-    if (xGap <= 0 && yGap <= 0) {
+var animation;
+var timer = 0;
+var jump = false;
+var jumpTimer = 0;
+var jumpSpeed = 5; // 점프 속도
+var cactusGroup = []    // 배열에 장애물 생성
+var cactusSpeed = 3; //장애물 속도
+var cactusFrequency = 180 ///장애물 빈도수
+var ground = dino.y;    //땅 위치
+
+//스페이스바 점프
+document.addEventListener("keydown", function() {
+    if (dino.y == ground) {
+        jump = true;
+    }
+})
+
+//랜덤 정수
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max-min)) + min;
+}
+
+//충돌 확인
+function checkCrush(obj1, obj2) {
+    var xGap = obj1.x - obj2.x > 0 ? obj1.x - (obj2.x + obj2.width) : obj2.x - (obj1.x + obj1.width);
+    var yGap = obj1.y - obj2.y > 0 ? obj1.y - (obj2.y + obj2.height) : obj2.y - (obj1.y + obj1.height);
+
+    if (xGap <= 0  && yGap <= 0) {
         cancelAnimationFrame(animation);
     }
 }
 
+function frame() {
+    animation = requestAnimationFrame(frame);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    timer++;
+    
+    //장애물 생성
+    if (timer % cactusFrequency == 0) {
+        var cactus = new Cactus(1300 + getRandomInt(-1, 1) * 100, 400, 50, 50);
+        console.log(cactusGroup)
+        cactusGroup.push(cactus);
+    }
+
+    //장애물 제거
+    cactusGroup.forEach(function(element) {
+        element.draw();
+        element.x -= cactusSpeed;
+        if (element.x < -element.width) {
+            cactusGroup.splice(0,1);
+        }
+    })
+
+    //점프
+    if (jump == true) {
+        jumpTimer++;
+        dino.y -= jumpSpeed;
+    }
+
+    if (jumpTimer > 45) {
+        jump = false;
+        jumpTimer = 0;
+    }
+
+    if (jump == false) {
+        if (dino.y < ground) {
+            dino.y += jumpSpeed;
+        }
+    }
+
+    dino.draw();
+    checkCrush(dino, cactusGroup[0]);
+}
+
+frame();
