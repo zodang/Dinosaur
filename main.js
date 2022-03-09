@@ -30,6 +30,7 @@ class Cactus {
 
 var animation;
 var timer = 0;
+var score = 0
 var jump = false;
 var jumpTimer = 0;
 var jumpSpeed = 5; // 점프 속도
@@ -65,13 +66,19 @@ function checkCrush(obj1, obj2) {
 function frame() {
     animation = requestAnimationFrame(frame);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    timer++;
     
+    timer++;
+
     //장애물 생성
     if (timer % cactusFrequency == 0) {
         var cactus = new Cactus(1300 + getRandomInt(-1, 1) * 100, 400, 50, 50);
-        console.log(cactusGroup)
         cactusGroup.push(cactus);
+    }
+
+    //스코어 계산
+    if (timer % 60 == 0){
+        score++;
+        document.getElementById("score").innerHTML = score;
     }
 
     //장애물 제거

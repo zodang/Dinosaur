@@ -1,13 +1,17 @@
 * {
     padding: 0;
     margin: 0;
-    
+    margin: 0 auto;
 }
-
+#text {
+    width: 480px;
+    margin: 100px auto 10px auto;
+    text-align: right;
+}
 #canvas {
     background: #eeeeee;
     width: 480px;
     height: 200px;
     display: block;
-    margin: 100px auto;
+    margin: 10px auto;
 }
