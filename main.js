@@ -28,16 +28,44 @@ class Cactus {
     }
 }
 
+
+
 var animation;
 var timer = 0;
 var score = 0
 var jump = false;
 var jumpTimer = 0;
-var jumpSpeed = 5; // 점프 속도
+var jumpSpeed = 7; // 점프 속도
 var cactusGroup = []    // 배열에 장애물 생성
-var cactusSpeed = 3; //장애물 속도
-var cactusFrequency = 180 ///장애물 빈도수
+var cactusSpeed = 5; //장애물 속도
+var cactusFrequency = 100 ///장애물 빈도수
 var ground = dino.y;    //땅 위치
+
+//다시 시작
+var replay = document.getElementById("replay");
+replay.addEventListener('click', function() {
+    timer = 0;
+    score = 0;
+    document.getElementById("score").innerHTML = 0;
+    cactusGroup = [];
+})
+
+//일시정지
+var game = true;
+var stop = document.getElementById("stop");
+stop.addEventListener('click', function() {
+    game = !game;
+
+    if (game == false) {
+        cancelAnimationFrame(animation);
+        stop.innerHTML = "다시시작"
+    }
+
+    else if (game == true) {
+        frame();
+        stop.innerHTML = "일시정지"
+    }
+})
 
 //스페이스바 점프
 document.addEventListener("keydown", function() {
@@ -71,7 +99,7 @@ function frame() {
 
     //장애물 생성
     if (timer % cactusFrequency == 0) {
-        var cactus = new Cactus(1300 + getRandomInt(-1, 1) * 100, 400, 50, 50);
+        var cactus = new Cactus(1300+getRandomInt(0, 3)*100, 400, 50, 50);
         cactusGroup.push(cactus);
     }
 
@@ -96,7 +124,7 @@ function frame() {
         dino.y -= jumpSpeed;
     }
 
-    if (jumpTimer > 45) {
+    if (jumpTimer > 35) {
         jump = false;
         jumpTimer = 0;
     }
