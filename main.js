@@ -28,8 +28,6 @@ class Cactus {
     }
 }
 
-
-
 var animation;
 var timer = 0;
 var score = 0
@@ -41,16 +39,7 @@ var cactusSpeed = 5; //장애물 속도
 var cactusFrequency = 100 ///장애물 빈도수
 var ground = dino.y;    //땅 위치
 
-//다시 시작
-var replay = document.getElementById("replay");
-replay.addEventListener('click', function() {
-    timer = 0;
-    score = 0;
-    document.getElementById("score").innerHTML = 0;
-    cactusGroup = [];
-})
-
-//일시정지
+//STOP
 var game = true;
 var stop = document.getElementById("stop");
 stop.addEventListener('click', function() {
@@ -58,13 +47,30 @@ stop.addEventListener('click', function() {
 
     if (game == false) {
         cancelAnimationFrame(animation);
-        stop.innerHTML = "다시시작"
+        stop.innerHTML = "START"
     }
 
     else if (game == true) {
         frame();
-        stop.innerHTML = "일시정지"
+        stop.innerHTML = "STOP"
     }
+    stop.blur();    //포커스 해제
+})
+
+//처음부터
+var replay = document.getElementById("replay");
+replay.addEventListener('click', function() {
+    timer = 0;
+    score = 0;
+    cactusGroup = [];
+    document.getElementById("score").innerHTML = 0;
+    stop.disabled = false;  //STOP버튼 활성화
+    game = true;
+    stop.innerHTML = "STOP"
+    replay.blur();  //포커스 해제
+    cancelAnimationFrame(animation);
+    frame();
+    dino.draw();
 })
 
 //스페이스바 점프
@@ -88,6 +94,7 @@ function checkCrush(obj1, obj2) {
 
     if (xGap <= 0  && yGap <= 0) {
         cancelAnimationFrame(animation);
+        stop.disabled = true;   //STOP 버튼 비활성화
     }
 }
 
