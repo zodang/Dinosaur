@@ -31,6 +31,7 @@ class Cactus {
 var animation;
 var timer = 0;
 var score = 0
+var bestScore = 0;
 var jump = false;
 var jumpTimer = 0;
 var jumpSpeed = 7; // 점프 속도
@@ -95,6 +96,12 @@ function checkCrush(obj1, obj2) {
     if (xGap <= 0  && yGap <= 0) {
         cancelAnimationFrame(animation);
         stop.disabled = true;   //STOP 버튼 비활성화
+        
+        //최고점수 기록
+        if (score >= bestScore) {
+            bestScore = score;
+            document.getElementById("bestScore").innerHTML = bestScore;
+        }
     }
 }
 
